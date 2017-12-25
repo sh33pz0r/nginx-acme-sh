@@ -1,7 +1,5 @@
 FROM nginx:1.12
 
-LABEL maintainer="Sergey Izgiyaev <sergo27@gmail.com>"
-
 RUN apt-get update && \
     apt-get install -y python-pip curl cron socat && \
     curl https://get.acme.sh | sh && \
