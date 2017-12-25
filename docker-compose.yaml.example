@@ -1,0 +1,33 @@
+---
+version: '3'
+
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.google.com'
+    volumes:
+      - '/srv/gitlab/config:/etc/gitlab'
+      - '/srv/gitlab/logs:/var/log/gitlab'
+      - '/srv/gitlab/data:/var/opt/gitlab'
+
+  reverse-proxy:
+      image: yuri1987/nginx-acme-sh:0.0.7
+      depends_on:
+          - gitlab
+      ports:
+          - 80:80
+          - 443:443
+      volumes:
+          - gitlab-reverse-proxy-acme:/root/.acme.sh
+          - gitlab-reverse-proxy-ssl:/etc/nginx/ssl
+      env_file:
+          - dns.env
+      entrypoint:
+          - entrypoint.sh
+          - "-ssl"
+volumes:
+  gitlab-reverse-proxy-acme:
+  gitlab-reverse-proxy-ssl:
